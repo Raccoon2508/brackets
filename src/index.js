@@ -1,47 +1,49 @@
 module.exports = function check(str, bracketsConfig) {
   
-  let openedPar=[];
-  let closedPar=[];
+  let openedPar=[]; //конфигурация открывающих скобок
+  let closedPar=[]; //конфигурация закрывающих скобок
 
-  let stackOpened=[];
+  let stackOpened=[]; //стек открывающих скобок
+  let stackClosed=[]; //стек закрывающих скобок
   
-
-
   for(let i=0; i<bracketsConfig.length; i++){
     let arrConf=bracketsConfig[i]
     openedPar.push(arrConf[0]);
     closedPar.push(arrConf[1]);
-    
   }
 
   let strToArray=str.split('');
 
   for(let i=0; i<strToArray.length; i++){
-    if(openedPar.indexOf(strToArray[i])>=0&&closedPar.indexOf(strToArray[i])<0){
-      stackOpened.push(openedPar[openedPar.indexOf(strToArray[i])]);
+    let pad=strToArray[i]; //текущая скобка в переборе str
+
+    if(openedPar.indexOf(pad)>=0&&closedPar.indexOf(pad)<0){ //если открывающая непарная
+      stackOpened.push(openedPar[openedPar.indexOf(pad)]);
     }
 
-    if(openedPar.indexOf(strToArray[i])>=0&&closedPar.indexOf(strToArray[i])>=0){
-      if(stackOpened.lastIndexOf((strToArray[i]),[i-1])<0){
-        stackOpened.push(strToArray[i]);
+    if(openedPar.indexOf(pad)>=0&&closedPar.indexOf(pad)>=0){// парная
+      if(stackOpened.lastIndexOf((pad),[i-1])<0){
+        stackOpened.push(pad);
       }else{
+        if(stackOpened[stackOpened.length-1]==pad){
          stackOpened.pop();
+        }
       }
     }
 
-    if(openedPar.indexOf(strToArray[i])<0&&closedPar.indexOf(strToArray[i])>=0){
-      if(stackOpened[stackOpened.lenght-1]==closedPar[openedPar.indexOf(strToArray[i])]){
+    if(openedPar.indexOf(pad)<0&&closedPar.indexOf(pad)>=0){//закрывающая
+      if(stackOpened[stackOpened.length-1]==openedPar[closedPar.indexOf(pad)]){
         stackOpened.pop();
+      }else{
+        stackClosed.push(pad);//в накопитель, если лишняя закрывающая
       }
-
-
     }
+ }
 
-  }
+if(stackOpened.length==0&&stackClosed.length==0){
+  return true;
+}else{
+  return false;
+}
 
- if(stackOpened==0){ 
-   return true;}
-   else{
-     return false;
-   }
- } 
+};
